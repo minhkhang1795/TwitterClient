@@ -44,7 +44,7 @@ The following **additional** features are implemented:
 
 * [x] Make ActionMode not overlay Compose Fragment (few lines of code but took me an hour!!!)
 * [x] Show keyboard once Compose Fragment appears (few lines of code but took me an hour!!!)
-* [x] Make Cursor's color to gray in Compose EditText
+* [x] Make Cursor's color gray in Compose EditText
 
 ## Video Walkthrough 
 
