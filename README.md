@@ -43,7 +43,7 @@ The following **bonus** features are implemented:
 The following **additional** features are implemented:
 
 * [x] Make ActionMode not overlay Compose Fragment (few lines of code but took me an hour!!!)
-* [x] Show keyboard once Compose Fragment is showed (few lines of code but took me an hour!!!)
+* [x] Show keyboard once Compose Fragment appears (few lines of code but took me an hour!!!)
 
 ## Video Walkthrough 
 
