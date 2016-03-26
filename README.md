@@ -42,7 +42,8 @@ The following **bonus** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [x] Make ActionMode not overlay Compose Fragment (few lines of code but took me an hour!!!)
+* [x] Show keyboard once Compose Fragment is showed (few lines of code but took me an hour!!!)
 
 ## Video Walkthrough 
 
