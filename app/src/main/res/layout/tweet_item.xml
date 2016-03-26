@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="12dp"
+    android:paddingLeft="12dp">
+
+    <ImageView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:id="@+id/profile_image_view"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tweet_image_view"
+        android:layout_below="@+id/body_text"
+        android:layout_alignLeft="@+id/user_name_text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/user_name"
+        android:id="@+id/user_name_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_alignTop="@id/profile_image_view"
+        android:layout_toRightOf="@+id/profile_image_view"
+        android:layout_toEndOf="@+id/profile_image_view"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/screen_name_text"
+        android:text="@string/screen_name"
+        android:textSize="14sp"
+        android:layout_alignBottom="@id/user_name_text"
+        android:layout_toRightOf="@+id/user_name_text"
+        android:layout_toEndOf="@+id/user_name_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/created_at"
+        android:id="@+id/created_at_text"
+        android:textSize="14sp"
+        android:layout_alignBottom="@id/user_name_text"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/body"
+        android:id="@+id/body_text"
+        android:textColor="@android:color/black"
+        android:lineSpacingExtra="4sp"
+        android:layout_below="@+id/user_name_text"
+        android:layout_toRightOf="@+id/profile_image_view"
+        android:layout_toEndOf="@+id/profile_image_view"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="8dp" />
+
+</RelativeLayout>

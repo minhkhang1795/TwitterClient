@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    ext {
+        supportLibVersion = '23.2'  // variable that can be referenced to keep support libs consistent
+    }
 }
 
 repositories {
@@ -32,4 +36,12 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.8'
     // ActiveAndroid for simple persistence with an ORM
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    compile 'com.android.support:recyclerview-v7:23.2.1'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.github.bumptech.glide:glide:3.5.2'
+    // Ultra Pull to Refresh
+    compile 'in.srain.cube:ultra-ptr:1.0.11'
+    // Design Support Library
+    compile "com.android.support:design:23.0.0"
+
 }

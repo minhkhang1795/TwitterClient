@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Rest Client Template</string>
+    <string name="app_name">Twitter Client</string>
     <string name="login_label">Log in</string>
+    <string name="title_acivity_timeline">Home Timeline</string>
+    <string name="user_name">User Name</string>
+    <string name="screen_name">Screen Name</string>
+    <string name="created_at">created_at</string>
+    <string name="body">body message</string>
+    <string name="tweet">Tweet</string>
+    <string name="hint">What\'s happening?</string>
+    <string name="text_count">140</string>
 
 </resources>

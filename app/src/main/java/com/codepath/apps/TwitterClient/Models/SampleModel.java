@@ -1,14 +1,14 @@
-package com.codepath.apps.restclienttemplate.models;
-
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+package com.codepath.apps.TwitterClient.Models;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
 
 /*
  * This is a temporary, sample model that demonstrates the basic structure
