@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:isScrollContainer="true"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.codepath.apps.TwitterClient.Activities.DetailsActivity">
+
+        <ImageView
+            android:id="@+id/profile_image_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true" />
+
+        <TextView
+            android:id="@+id/user_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_toEndOf="@+id/profile_image_view"
+            android:layout_toRightOf="@+id/profile_image_view"
+            android:text="@string/user_name"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/screen_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_name_text"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_toEndOf="@+id/profile_image_view"
+            android:layout_toRightOf="@+id/profile_image_view"
+            android:text="@string/screen_name" />
+
+        <TextView
+            android:id="@+id/body_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/profile_image_view"
+            android:layout_marginTop="8dp"
+            android:lineSpacingExtra="4sp"
+            android:text="@string/body"
+            android:textColor="@android:color/black" />
+
+        <ImageView
+            android:id="@+id/tweet_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/body_text"
+            android:layout_alignRight="@+id/body_text"
+            android:layout_below="@+id/body_text"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/created_at_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/tweet_image_view"
+            android:layout_marginTop="8dp"
+            android:text="@string/created_at" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/reply_button"
+            android:layout_below="@id/created_at_text"
+            android:text="Reply"
+            android:onClick="onReply" />
+    </RelativeLayout>
+</ScrollView>

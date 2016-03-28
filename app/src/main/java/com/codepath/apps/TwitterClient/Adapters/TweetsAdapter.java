@@ -1,10 +1,11 @@
-package com.codepath.apps.TwitterClient;
+package com.codepath.apps.TwitterClient.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +16,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.codepath.apps.TwitterClient.Models.Tweet;
+import com.codepath.apps.TwitterClient.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -64,7 +69,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         Tweet tweet = mTweets.get(position);
         holder.mBodyMessage.setText(tweet.getmBody());
         Linkify.addLinks(holder.mBodyMessage, Linkify.WEB_URLS);
-        holder.mCreatedAt.setText(tweet.getmCreatedAt());
+        String createdAtString = setRelativeTimeAgo(tweet.getmCreatedAt());
+        holder.mCreatedAt.setText(createdAtString);
         holder.mScreenName.setText("@" + tweet.getmUser().getmScreenName());
         holder.mUserName.setText(tweet.getmUser().getmName());
         final ImageView profileImageView = holder.mProfileImageView;
@@ -103,6 +109,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         }
     }
 
+
+    private static String setRelativeTimeAgo(String rawJsonDate) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        relativeDate = relativeDate.replaceAll(" minutes ago", "m");
+        relativeDate = relativeDate.replaceAll(" minute ago", "m");
+        relativeDate = relativeDate.replaceAll(" hours ago", "h");
+        relativeDate = relativeDate.replaceAll(" hour ago", "h");
+        return relativeDate;
+    }
 
     @Override
     public int getItemCount() {

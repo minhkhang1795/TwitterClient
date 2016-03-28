@@ -1,26 +1,25 @@
 package com.codepath.apps.TwitterClient.Models;
 
-import android.text.format.DateUtils;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by duyvu on 3/25/16.
  */
 @Table(name = "Tweets")
-public class Tweet extends Model {
-    @Column(name = "name")
+public class Tweet extends Model implements Parcelable {
+    @Column(name = "body")
     private String mBody;
 
     @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
@@ -74,10 +73,10 @@ public class Tweet extends Model {
         Tweet tweet = new Tweet();
         try {
             tweet.mBody = jsonObject.getString("text");
-            tweet.mId = jsonObject.getLong("id");
-            tweet.mCreatedAt = getRelativeTimeAgo(jsonObject.getString("created_at"));
-            tweet.mUser = User.fromJSON(jsonObject.getJSONObject("user"));
-            if(jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type").equals("photo")) {
+//            tweet.mId = jsonObject.getLong("id");
+            tweet.mCreatedAt = jsonObject.getString("created_at");
+            tweet.mUser = User.findOrCreateFromJson(jsonObject.getJSONObject("user"));
+            if (jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type").equals("photo")) {
                 tweet.mImageUrl = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("media_url");
             } else {
                 tweet.mImageUrl = null;
@@ -94,6 +93,27 @@ public class Tweet extends Model {
         return tweet;
     }
 
+    // Finds existing user based on remoteId or creates new user and returns
+    public static Tweet findOrCreateFromJson(JSONObject jsonObject) {
+        long rId = 0; // get just the remote id
+        try {
+            rId = jsonObject.getLong("id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Tweet existingTweet =
+                new Select().from(Tweet.class).where("remote_id = ?", rId).executeSingle();
+        if (existingTweet != null) {
+            // found and return existing
+            return existingTweet;
+        } else {
+            // create and return new user
+            Tweet tweet = Tweet.fromJSON(jsonObject);
+            tweet.save();
+            return tweet;
+        }
+    }
+
     private static String clearUrlInString(String mBodyUrl) {
         return mBodyUrl.replaceAll("https:\\//t.co\\/\\w*", "");
     }
@@ -104,7 +124,7 @@ public class Tweet extends Model {
 
             try {
                 JSONObject tweetJson = jsonArray.getJSONObject(i);
-                Tweet tweet = Tweet.fromJSON(tweetJson);
+                Tweet tweet = Tweet.findOrCreateFromJson(tweetJson);
                 if (tweet != null) {
                     tweets.add(tweet);
                 }
@@ -116,18 +136,38 @@ public class Tweet extends Model {
         return tweets;
     }
 
-    private static String getRelativeTimeAgo(String rawJsonDate) {
-        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
-        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
-        sf.setLenient(true);
-        String relativeDate = "";
-        try {
-            long dateMillis = sf.parse(rawJsonDate).getTime();
-            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                    System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL).toString();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return relativeDate;
+    @Override
+    public int describeContents() {
+        return 0;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mBody);
+        dest.writeLong(mId);
+        dest.writeString(mCreatedAt);
+        dest.writeString(mImageUrl);
+        dest.writeString(mBodyUrl);
+        dest.writeParcelable(mUser, flags);
+    }
+
+    protected Tweet(Parcel in) {
+        this.mBody = in.readString();
+        this.mId = in.readLong();
+        this.mCreatedAt = in.readString();
+        this.mImageUrl = in.readString();
+        this.mBodyUrl = in.readString();
+        this.mUser = in.readParcelable(User.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator CREATOR =
+            new Parcelable.Creator() {
+                public Tweet createFromParcel(Parcel in) {
+                    return new Tweet(in);
+                }
+
+                public Tweet[] newArray(int size) {
+                    return new Tweet[size];
+                }
+            };
 }

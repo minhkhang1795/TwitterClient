@@ -1,5 +1,6 @@
 package com.codepath.apps.TwitterClient.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
@@ -14,14 +15,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
-import com.codepath.apps.TwitterClient.ComposeDialog;
-import com.codepath.apps.TwitterClient.DividerItemDecoration;
-import com.codepath.apps.TwitterClient.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.TwitterClient.Adapters.TweetsAdapter;
+import com.codepath.apps.TwitterClient.Dialogs.ComposeDialog;
+import com.codepath.apps.TwitterClient.Java.DividerItemDecoration;
+import com.codepath.apps.TwitterClient.Java.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.TwitterClient.Java.ItemClickSupport;
+import com.codepath.apps.TwitterClient.Java.TwitterApplication;
+import com.codepath.apps.TwitterClient.Java.TwitterClient;
 import com.codepath.apps.TwitterClient.Models.Tweet;
 import com.codepath.apps.TwitterClient.R;
-import com.codepath.apps.TwitterClient.TweetsAdapter;
-import com.codepath.apps.TwitterClient.TwitterApplication;
-import com.codepath.apps.TwitterClient.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
@@ -67,6 +69,15 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
+        ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Intent i = new Intent(TimelineActivity.this, DetailsActivity.class);
+                Tweet tweet = mTweets.get(position);
+                i.putExtra("tweet", tweet);
+                startActivityForResult(i, 200);
+            }
+        });
         mPtrFrame.setLastUpdateTimeRelateObject(this);
         mPtrFrame.setPtrHandler(new PtrDefaultHandler() {
             @Override
@@ -158,12 +169,12 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     }
 
     @Override
-    public void onFinishEditDialog(String inputText) {
+    public void onFinishEditDialog(String inputText, long replyID) {
         if (isOnline()) {
-            client.postTweet(inputText, new JsonHttpResponseHandler() {
+            client.postTweet(inputText, replyID, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    mTweets.add(0, Tweet.fromJSON(response));
+                    mTweets.add(0, Tweet.findOrCreateFromJson(response));
                     mTweetsAdapter.notifyItemInserted(0);
                     mRecyclerView.scrollToPosition(0);
                 }

@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient;
+package com.codepath.apps.TwitterClient.Java;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;

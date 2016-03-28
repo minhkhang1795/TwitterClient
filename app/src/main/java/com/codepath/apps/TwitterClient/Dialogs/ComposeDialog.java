@@ -1,16 +1,14 @@
-package com.codepath.apps.TwitterClient;
+package com.codepath.apps.TwitterClient.Dialogs;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,20 +21,26 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.codepath.apps.TwitterClient.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ComposeDialog extends DialogFragment {
 
-    @Bind(R.id.messege_text) EditText mComposeText;
-    @Bind(R.id.tweet_button) Button mTweetButton;
-    @Bind(R.id.counter_text_view) TextView mCounterTextView;
-    @Bind(R.id.fragment_bottom_layout) RelativeLayout bottomLayout;
-    @Bind(R.id.profile_image_view) ImageView mProfileImageView;
-    @Bind(R.id.close_button) ImageButton mCloseButton;
+    @Bind(R.id.messege_text)
+    EditText mComposeText;
+    @Bind(R.id.tweet_button)
+    Button mTweetButton;
+    @Bind(R.id.counter_text_view)
+    TextView mCounterTextView;
+    @Bind(R.id.fragment_bottom_layout)
+    RelativeLayout bottomLayout;
+    @Bind(R.id.profile_image_view)
+    ImageView mProfileImageView;
+    @Bind(R.id.close_button)
+    ImageButton mCloseButton;
+    long replyID = -1;
 
     public ComposeDialog() {
         // Empty constructor is required for DialogFragment
@@ -53,7 +57,7 @@ public class ComposeDialog extends DialogFragment {
 
     // Defines the listener interface
     public interface ComposeDialogListener {
-        void onFinishEditDialog(String inputText);
+        void onFinishEditDialog(String inputText, long replyID);
     }
 
 
@@ -62,12 +66,22 @@ public class ComposeDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_compose, container, false);
         ButterKnife.bind(this, view);
-        mCloseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        setOnClickListener();
+        addTextWatcher();
+
+        String screenName = getArguments().getString("screen_name", "");
+        if (screenName.length() > 0) {
+            mComposeText.setText("@" + screenName + " ");
+            mComposeText.setSelection(mComposeText.getText().length());
+            replyID = getArguments().getLong("user_reply_id");
+        }
         //TODO: Set user's profile image (Week 4)
 //        Glide.with(getContext())
 //                .load(url)
@@ -80,14 +94,6 @@ public class ComposeDialog extends DialogFragment {
 //                mProfileImageView.setImageDrawable(circularBitmapDrawable);
 //            }
 //        });
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setOnClickListener();
-        addTextWatcher();
     }
 
     @Override
@@ -106,6 +112,7 @@ public class ComposeDialog extends DialogFragment {
             public void run() {
                 view.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
                 view.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+                mComposeText.setSelection(mComposeText.getText().length());
             }
         }, 200);
     }
@@ -122,11 +129,17 @@ public class ComposeDialog extends DialogFragment {
     private void onCompose() {
         // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
         ComposeDialogListener listener = (ComposeDialogListener) getActivity();
-        listener.onFinishEditDialog(mComposeText.getText().toString());
+        listener.onFinishEditDialog(mComposeText.getText().toString(), replyID);
         dismiss();
     }
 
     private void setOnClickListener() {
+        mCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         mTweetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -146,6 +159,7 @@ public class ComposeDialog extends DialogFragment {
         mComposeText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
@@ -153,8 +167,8 @@ public class ComposeDialog extends DialogFragment {
                 mCounterTextView.setText(String.valueOf((140 - s.length())));
                 if (s.length() > 140) mCounterTextView.setTextColor(Color.RED);
                 else mCounterTextView.setTextColor(R.color.grayDark);
-
                 int index = start - before;
+                Log.d("DEBU", String.valueOf(index));
                 if (isTextInRange(s) && isTextNotNull(s, index)) {
                     mTweetButton.setClickable(true);
                     mTweetButton.setBackgroundResource(R.drawable.tweet_button_enabled);
@@ -171,8 +185,8 @@ public class ComposeDialog extends DialogFragment {
     }
 
     private Boolean isTextNotNull(final CharSequence s, final int index) {
-        return index >=0 && !(String.valueOf(s.charAt(index)) == ""
-                && String.valueOf(s.charAt(index)) == "\n");
+        String string = s.toString();
+        return !string.trim().isEmpty();
     }
 
     private Boolean isTextInRange(final CharSequence s) {

@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient;
+package com.codepath.apps.TwitterClient.Java;
 
 import android.content.Context;
 
@@ -45,10 +45,13 @@ public class TwitterClient extends OAuthBaseClient {
 	}
 
 	// GET HOME TIMELINE
-	public void postTweet(String status, AsyncHttpResponseHandler handler) {
+	public void postTweet(String status, long replyID, AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses//update.json");
 		// Specify RequestParams.
 		RequestParams params = new RequestParams();
+		if (replyID != -1) {
+			params.put("in_reply_to_status_id", replyID);
+		}
 		params.put("status", status);
 		// Execute the request
 		getClient().post(apiUrl, params, handler);
