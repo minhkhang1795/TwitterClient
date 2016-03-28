@@ -2,6 +2,10 @@ package com.codepath.apps.TwitterClient.Models;
 
 import android.text.format.DateUtils;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,12 +18,29 @@ import java.util.Locale;
 /**
  * Created by duyvu on 3/25/16.
  */
-public class Tweet {
+@Table(name = "Tweets")
+public class Tweet extends Model {
+    @Column(name = "name")
     private String mBody;
+
+    @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private long mId; // unique ID for a tweet
+
+    @Column(name = "User", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
     private User mUser;
-    private String mCreateAt;
+
+    @Column(name = "created_at")
+    private String mCreatedAt;
+
+    @Column(name = "image_url")
     private String mImageUrl;
+
+    @Column(name = "body_url")
+    private String mBodyUrl;
+
+    public Tweet() {
+        super();
+    }
 
     public String getmImageUrl() {
         return mImageUrl;
@@ -37,8 +58,16 @@ public class Tweet {
         return mId;
     }
 
-    public String getmCreateAt() {
-        return mCreateAt;
+    public String getmBodyUrl() {
+        return mBodyUrl;
+    }
+
+    public void setmBodyUrl(String mBodyUrl) {
+        this.mBodyUrl = mBodyUrl;
+    }
+
+    public String getmCreatedAt() {
+        return mCreatedAt;
     }
 
     public static Tweet fromJSON(JSONObject jsonObject) {
@@ -46,13 +75,27 @@ public class Tweet {
         try {
             tweet.mBody = jsonObject.getString("text");
             tweet.mId = jsonObject.getLong("id");
-            tweet.mCreateAt = getRelativeTimeAgo(jsonObject.getString("created_at"));
+            tweet.mCreatedAt = getRelativeTimeAgo(jsonObject.getString("created_at"));
             tweet.mUser = User.fromJSON(jsonObject.getJSONObject("user"));
-            tweet.mImageUrl = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("media_url");
+            if(jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type").equals("photo")) {
+                tweet.mImageUrl = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("media_url");
+            } else {
+                tweet.mImageUrl = null;
+            }
+            tweet.mBodyUrl = jsonObject.getJSONObject("entities").getJSONArray("urls").getJSONObject(0).getString("display_url");
+            tweet.mBody = clearUrlInString(tweet.mBody);
+            if (tweet.mBodyUrl.length() > 0) {
+                tweet.mBody += tweet.mBodyUrl;
+            }
+            tweet.save();
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return tweet;
+    }
+
+    private static String clearUrlInString(String mBodyUrl) {
+        return mBodyUrl.replaceAll("https:\\//t.co\\/\\w*", "");
     }
 
     public static ArrayList<Tweet> fromJSONArray(JSONArray jsonArray) {

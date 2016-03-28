@@ -7,20 +7,30 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.activeandroid.query.Select;
 import com.codepath.apps.TwitterClient.ComposeDialog;
+import com.codepath.apps.TwitterClient.DividerItemDecoration;
 import com.codepath.apps.TwitterClient.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.TwitterClient.Models.Tweet;
 import com.codepath.apps.TwitterClient.R;
 import com.codepath.apps.TwitterClient.TweetsAdapter;
 import com.codepath.apps.TwitterClient.TwitterApplication;
 import com.codepath.apps.TwitterClient.TwitterClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,8 +46,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     private int mSinceId = 1;
     @Bind(R.id.store_house_ptr_frame) PtrClassicFrameLayout mPtrFrame;
     @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
-    @Bind(R.id.fab)
-    FloatingActionButton mFActButton;
+    @Bind(R.id.fab) FloatingActionButton mFActButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,24 +55,23 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         ButterKnife.bind(this);
         client = TwitterApplication.getRestClient(); // singleton client
         setupView();
-        showComposeDialog();
+        dataHandler();
+    }
+
+    private void dataHandler() {
+        populateTimeline(0);
     }
 
     private void setupView() {
         mRecyclerView.setAdapter(mTweetsAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
         mPtrFrame.setLastUpdateTimeRelateObject(this);
         mPtrFrame.setPtrHandler(new PtrDefaultHandler() {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 populateTimeline(0);
-                frame.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPtrFrame.refreshComplete();
-                    }
-                }, 1800);
             }
 
             @Override
@@ -71,7 +79,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
                 return PtrDefaultHandler.checkContentCanBePulledDown(frame, content, header);
             }
         });
-        populateTimeline(0);
         mRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
@@ -96,24 +103,37 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     // Send API request to get the timeline json
     // Fill the recycler view by creating a tweet object from the json
     private void populateTimeline(int page) {
-        if (page == 1) {
+        if (isOnline()) {
+            if (page == 1) {
+                mTweets.clear();
+                mTweetsAdapter.notifyDataSetChanged();
+            }
+            client.getHomeTimeline(page, new JsonHttpResponseHandler() {
+                // Success
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    Log.d("DEBUG", response.toString());
+                    mTweets.addAll(Tweet.fromJSONArray(response));
+                    mTweetsAdapter.notifyItemRangeInserted(mTweetsAdapter.getItemCount(), mTweets.size() - 1);
+                    mPtrFrame.refreshComplete();
+                }
+
+                // Failure
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                    Toast.makeText(getBaseContext(), "Request Limit Exceeded 2", Toast.LENGTH_LONG).show();
+                    mPtrFrame.refreshComplete();
+                }
+            });
+        } else {
+            List<Tweet> queryResults = new Select().from(Tweet.class).execute();
             mTweets.clear();
+            mTweets.addAll(queryResults);
             mTweetsAdapter.notifyDataSetChanged();
+            Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
+            mPtrFrame.refreshComplete();
         }
-//        client.getHomeTimeline(page, new JsonHttpResponseHandler() {
-//            // Success
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-//                Log.d("DEBUG", response.toString());
-//                mTweets.addAll(Tweet.fromJSONArray(response));
-//                mTweetsAdapter.notifyItemRangeInserted(mTweetsAdapter.getItemCount(), mTweets.size() - 1);
-//            }
-//            // Failure
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-//                Log.d("DEBUG", errorResponse.toString());
-//            }
-//        });
     }
 
 
@@ -139,6 +159,34 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
 
     @Override
     public void onFinishEditDialog(String inputText) {
-        Toast.makeText(this, inputText, Toast.LENGTH_LONG).show();
+        if (isOnline()) {
+            client.postTweet(inputText, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    mTweets.add(0, Tweet.fromJSON(response));
+                    mTweetsAdapter.notifyItemInserted(0);
+                    mRecyclerView.scrollToPosition(0);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+                    Toast.makeText(getBaseContext(), "Request Limit Exceeded", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

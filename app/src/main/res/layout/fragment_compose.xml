@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/edit_name"
+    android:id="@+id/compose_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:windowSoftInputMode="stateVisible|adjustResize"
@@ -9,35 +9,35 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/fragment_bottom_layout"
-        android:layout_alignParentBottom="true">
-        <TextView
+        android:id="@+id/fragment_top_layout"
+        android:layout_alignParentTop="true">
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/counter_text_view"
-            android:textColor="@color/grayDark"
+            android:id="@+id/profile_image_view"
             android:layout_centerVertical="true"
-            android:textSize="14sp"
-            android:text="@string/text_count"
-            android:layout_toLeftOf="@+id/tweet_button"
-            android:layout_marginEnd="12dp"
-            android:layout_marginRight="12dp"/>
-        <Button
-            android:layout_width="70dp"
-            android:layout_height="36dp"
-            android:clickable="false"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
+            android:layout_alignParentEnd="true" />
+        <ImageButton
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:paddingTop="12dp"
+            android:background="@drawable/button_normal"
+            android:paddingLeft="8dp"
+            android:paddingStart="8dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="false"
             android:layout_centerVertical="true"
-            android:textSize="14sp"
-            android:id="@+id/tweet_button"
-            style="@style/TweetButtonUnenabled" />
+            android:id="@+id/close_button"
+            android:contentDescription="@string/button_close" />
     </RelativeLayout>
 
     <EditText
         android:id="@+id/messege_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/fragment_top_layout"
+        android:layout_marginTop="12dp"
         android:gravity="top"
         android:inputType="textMultiLine"
         android:hint="@string/hint"
@@ -49,5 +49,34 @@
         android:lines="9"
         android:maxLines="9"
         android:scrollbarStyle="insideInset"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragment_bottom_layout"
+        android:background="@drawable/bottom_layout"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/counter_text_view"
+            android:textColor="@color/grayDark"
+            android:layout_centerVertical="true"
+            android:textSize="14sp"
+            android:text="@string/text_count"
+            android:layout_toLeftOf="@+id/tweet_button"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"/>
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textSize="14sp"
+            android:id="@+id/tweet_button"
+            style="@style/TweetButtonUnenabled" />
+    </RelativeLayout>
 
 </RelativeLayout>

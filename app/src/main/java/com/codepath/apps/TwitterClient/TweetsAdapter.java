@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         // Inflate the custom layout
-        View contactView = inflater.inflate(R.layout.tweet_item, parent, false);
+        View contactView = inflater.inflate(R.layout.tweet_item_image, parent, false);
 
         // Return a new holder instance
         return new ViewHolder(contactView);
@@ -62,7 +63,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public void onBindViewHolder(TweetsAdapter.ViewHolder holder, int position) {
         Tweet tweet = mTweets.get(position);
         holder.mBodyMessage.setText(tweet.getmBody());
-        holder.mCreatedAt.setText(tweet.getmCreateAt());
+        Linkify.addLinks(holder.mBodyMessage, Linkify.WEB_URLS);
+        holder.mCreatedAt.setText(tweet.getmCreatedAt());
         holder.mScreenName.setText("@" + tweet.getmUser().getmScreenName());
         holder.mUserName.setText(tweet.getmUser().getmName());
         final ImageView profileImageView = holder.mProfileImageView;
@@ -77,23 +79,30 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 profileImageView.setImageDrawable(circularBitmapDrawable);
             }
         });
-        final ImageView tweetImageView = holder.mTweetImage;
-        Glide.with(mContext)
-                .load(tweet.getmImageUrl())
-                .asBitmap()
-                .into(tweetImageView);
-//        Glide.with(mContext)
-//                .load(tweet.getmImageUrl())
-//                .asBitmap().into(new BitmapImageViewTarget(tweetImageView) {
-//            @Override
-//            protected void setResource(Bitmap resource) {
-//                RoundedBitmapDrawable circularBitmapDrawable =
-//                        RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
-//                circularBitmapDrawable.setCornerRadius(0);
-//                tweetImageView.setImageDrawable(circularBitmapDrawable);
-//            }
-//        });
+        if (tweet.getmImageUrl() != null) {
+            holder.mTweetImage.setVisibility(View.VISIBLE);
+            final ImageView tweetImageView = holder.mTweetImage;
+//            Glide.with(mContext)
+//                    .load(tweet.getmImageUrl())
+//                    .asBitmap()
+//                    .into(tweetImageView);
+            Glide.with(mContext)
+                    .load(tweet.getmImageUrl())
+                    .asBitmap()
+                    .into(new BitmapImageViewTarget(tweetImageView) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
+                            circularBitmapDrawable.setCornerRadius(16);
+                            tweetImageView.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+        } else {
+            holder.mTweetImage.setVisibility(View.GONE);
+        }
     }
+
 
     @Override
     public int getItemCount() {

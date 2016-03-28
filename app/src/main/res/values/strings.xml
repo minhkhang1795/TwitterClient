@@ -11,5 +11,6 @@
     <string name="tweet">Tweet</string>
     <string name="hint">What\'s happening?</string>
     <string name="text_count">140</string>
+    <string name="button_close">button_close</string>
 
 </resources>

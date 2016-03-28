@@ -1,11 +1,14 @@
 package com.codepath.apps.TwitterClient;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,8 +18,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,6 +35,8 @@ public class ComposeDialog extends DialogFragment {
     @Bind(R.id.tweet_button) Button mTweetButton;
     @Bind(R.id.counter_text_view) TextView mCounterTextView;
     @Bind(R.id.fragment_bottom_layout) RelativeLayout bottomLayout;
+    @Bind(R.id.profile_image_view) ImageView mProfileImageView;
+    @Bind(R.id.close_button) ImageButton mCloseButton;
 
     public ComposeDialog() {
         // Empty constructor is required for DialogFragment
@@ -52,50 +62,32 @@ public class ComposeDialog extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_compose, container, false);
         ButterKnife.bind(this, view);
+        mCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+        //TODO: Set user's profile image (Week 4)
+//        Glide.with(getContext())
+//                .load(url)
+//                .asBitmap().into(new BitmapImageViewTarget(mProfileImageView) {
+//            @Override
+//            protected void setResource(Bitmap resource) {
+//                RoundedBitmapDrawable circularBitmapDrawable =
+//                        RoundedBitmapDrawableFactory.create(getContext().getResources(), resource);
+//                circularBitmapDrawable.setCornerRadius(6);
+//                mProfileImageView.setImageDrawable(circularBitmapDrawable);
+//            }
+//        });
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTweetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCompose();
-            }
-        });
-        mComposeText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mCounterTextView.setText(String.valueOf((140 - s.length())));
-                if (s.length() > 0 && s.length() <= 140) {
-                    mTweetButton.setClickable(true);
-                    mTweetButton.setBackgroundResource(R.drawable.tweet_button_enabled);
-                    mCounterTextView.setTextColor(R.color.grayDark);
-                } else {
-                    mTweetButton.setClickable(false);
-                    mTweetButton.setBackgroundResource(R.drawable.tweet_button_unenabled);
-                    if (s.length() > 140) mCounterTextView.setTextColor(Color.RED);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        bottomLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showSoftKeyboard(mComposeText);
-            }
-        });
-
+        setOnClickListener();
+        addTextWatcher();
     }
 
     @Override
@@ -132,5 +124,58 @@ public class ComposeDialog extends DialogFragment {
         ComposeDialogListener listener = (ComposeDialogListener) getActivity();
         listener.onFinishEditDialog(mComposeText.getText().toString());
         dismiss();
+    }
+
+    private void setOnClickListener() {
+        mTweetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCompose();
+            }
+        });
+        bottomLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSoftKeyboard(mComposeText);
+            }
+        });
+        mTweetButton.setClickable(false);
+    }
+
+    private void addTextWatcher() {
+        mComposeText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mCounterTextView.setText(String.valueOf((140 - s.length())));
+                if (s.length() > 140) mCounterTextView.setTextColor(Color.RED);
+                else mCounterTextView.setTextColor(R.color.grayDark);
+
+                int index = start - before;
+                if (isTextInRange(s) && isTextNotNull(s, index)) {
+                    mTweetButton.setClickable(true);
+                    mTweetButton.setBackgroundResource(R.drawable.tweet_button_enabled);
+                } else {
+                    mTweetButton.setClickable(false);
+                    mTweetButton.setBackgroundResource(R.drawable.tweet_button_unenabled);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+    }
+
+    private Boolean isTextNotNull(final CharSequence s, final int index) {
+        return index >=0 && !(String.valueOf(s.charAt(index)) == ""
+                && String.valueOf(s.charAt(index)) == "\n");
+    }
+
+    private Boolean isTextInRange(final CharSequence s) {
+        return s.length() > 0 && s.length() <= 140;
     }
 }
