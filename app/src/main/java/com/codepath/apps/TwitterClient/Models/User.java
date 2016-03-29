@@ -35,25 +35,6 @@ public class User extends Model implements Parcelable {
         super();
     }
 
-    protected User(Parcel in) {
-        mName = in.readString();
-        mId = in.readLong();
-        mScreenName = in.readString();
-        mImageUrl = in.readString();
-    }
-
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        @Override
-        public User createFromParcel(Parcel in) {
-            return new User(in);
-        }
-
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
-
     public List<Tweet> tweets() {
         return getMany(Tweet.class, "User");
     }
@@ -78,7 +59,7 @@ public class User extends Model implements Parcelable {
         User user = new User();
         try {
             user.mName = jsonObject.getString("name");
-//            user.mId = jsonObject.getLong("id");
+            user.mId = jsonObject.getLong("id");
             user.mScreenName = jsonObject.getString("screen_name");
             user.mImageUrl = jsonObject.getString("profile_image_url");
             user.save();
@@ -121,4 +102,23 @@ public class User extends Model implements Parcelable {
         dest.writeString(mScreenName);
         dest.writeString(mImageUrl);
     }
+
+    protected User(Parcel in) {
+        mName = in.readString();
+        mId = in.readLong();
+        mScreenName = in.readString();
+        mImageUrl = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

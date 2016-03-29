@@ -57,10 +57,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
         ButterKnife.bind(this);
         client = TwitterApplication.getRestClient(); // singleton client
         setupView();
-        dataHandler();
-    }
-
-    private void dataHandler() {
         populateTimeline(0);
     }
 
@@ -157,15 +153,18 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-//        switch (id) {
-//            case R.id.action_setting:
-//                return true;
-//                break;
-//            default:
-//                return true;
-//                break;
-//        }
+        switch (id) {
+            case R.id.action_log_out:
+                logOut();
+                return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logOut() {
+        TwitterClient client = TwitterApplication.getRestClient();
+        client.clearAccessToken();
+        this.finish();
     }
 
     @Override

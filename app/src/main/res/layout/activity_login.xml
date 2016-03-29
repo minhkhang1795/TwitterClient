@@ -6,14 +6,53 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/background_gradient"
     tools:context=".Activities.LoginActivity" >
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
+        android:id="@+id/login_button"
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:background="@drawable/login_button"
+        android:layout_marginBottom="26dp"
+        android:textColor="#2A94E1"
         android:onClick="loginToRest"
-        android:text="@string/login_label" />
+        android:textStyle="bold"
+        android:text="@string/login_label"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/twitter_logo_white"
+        android:id="@+id/twitter_logo_image"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/introduction_string_1"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:id="@+id/textView"
+        android:layout_above="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/introduction_string_2"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:lines="2"
+        android:id="@+id/textView2"
+        android:layout_above="@+id/login_button"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

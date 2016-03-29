@@ -12,5 +12,8 @@
     <string name="hint">What\'s happening?</string>
     <string name="text_count">140</string>
     <string name="button_close">button_close</string>
+    <string name="introduction_string_1">Welcome to Twitter</string>
+    <string name="introduction_string_2">Get real-time update about what matters to you</string>
+    <string name="log_out">Log out</string>
 
 </resources>

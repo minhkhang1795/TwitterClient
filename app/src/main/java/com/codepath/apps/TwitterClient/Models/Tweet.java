@@ -73,7 +73,7 @@ public class Tweet extends Model implements Parcelable {
         Tweet tweet = new Tweet();
         try {
             tweet.mBody = jsonObject.getString("text");
-//            tweet.mId = jsonObject.getLong("id");
+            tweet.mId = jsonObject.getLong("id");
             tweet.mCreatedAt = jsonObject.getString("created_at");
             tweet.mUser = User.findOrCreateFromJson(jsonObject.getJSONObject("user"));
             if (jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type").equals("photo")) {
@@ -114,10 +114,6 @@ public class Tweet extends Model implements Parcelable {
         }
     }
 
-    private static String clearUrlInString(String mBodyUrl) {
-        return mBodyUrl.replaceAll("https:\\//t.co\\/\\w*", "");
-    }
-
     public static ArrayList<Tweet> fromJSONArray(JSONArray jsonArray) {
         ArrayList<Tweet> tweets = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -134,6 +130,10 @@ public class Tweet extends Model implements Parcelable {
             }
         }
         return tweets;
+    }
+
+    private static String clearUrlInString(String mBodyUrl) {
+        return mBodyUrl.replaceAll("https:\\//t.co\\/\\w*", "");
     }
 
     @Override
