@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.Java;
+package com.codepath.apps.TwitterClient.myclass;
 
 /**
  * Created by duyvu on 3/20/16.

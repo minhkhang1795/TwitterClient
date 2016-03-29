@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.Activities;
+package com.codepath.apps.TwitterClient.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
-import com.codepath.apps.TwitterClient.Java.TwitterClient;
+import com.codepath.apps.TwitterClient.myclass.TwitterClient;
 import com.codepath.apps.TwitterClient.R;
 import com.codepath.oauth.OAuthLoginActionBarActivity;
 

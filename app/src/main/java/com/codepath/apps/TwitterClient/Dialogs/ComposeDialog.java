@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.Dialogs;
+package com.codepath.apps.TwitterClient.dialogs;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -80,7 +80,7 @@ public class ComposeDialog extends DialogFragment {
         if (screenName.length() > 0) {
             mComposeText.setText("@" + screenName + " ");
             mComposeText.setSelection(mComposeText.getText().length());
-            replyID = getArguments().getLong("user_reply_id");
+            replyID = getArguments().getLong("status_id");
         }
         //TODO: Set user's profile image (Week 4)
 //        Glide.with(getContext())

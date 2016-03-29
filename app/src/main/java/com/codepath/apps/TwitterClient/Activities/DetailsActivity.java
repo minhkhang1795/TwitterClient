@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.Activities;
+package com.codepath.apps.TwitterClient.activities;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -15,10 +15,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.codepath.apps.TwitterClient.Dialogs.ComposeDialog;
-import com.codepath.apps.TwitterClient.Java.TwitterApplication;
-import com.codepath.apps.TwitterClient.Java.TwitterClient;
-import com.codepath.apps.TwitterClient.Models.Tweet;
+import com.codepath.apps.TwitterClient.dialogs.ComposeDialog;
+import com.codepath.apps.TwitterClient.myclass.TwitterApplication;
+import com.codepath.apps.TwitterClient.myclass.TwitterClient;
+import com.codepath.apps.TwitterClient.models.Tweet;
 import com.codepath.apps.TwitterClient.R;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -108,7 +108,7 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
         ComposeDialog composeDialog = ComposeDialog.newInstance();
         Bundle args = new Bundle();
         args.putString("screen_name", tweet.getmUser().getmScreenName());
-        args.putLong("user_reply_id", tweet.getmUser().getmId());
+        args.putLong("status_id", tweet.getmId());
         composeDialog.setArguments(args);
         composeDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.Dialog_FullScreen);
         composeDialog.show(fm, "fragment_compose");

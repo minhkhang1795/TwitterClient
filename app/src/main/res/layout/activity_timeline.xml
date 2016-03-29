@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray"
-    tools:context=".Activities.TimelineActivity">
+    tools:context=".activities.TimelineActivity">
 
     <in.srain.cube.views.ptr.PtrClassicFrameLayout
         xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
@@ -36,7 +36,7 @@
         android:clickable="true"
         android:src="@drawable/ic_compose"
         app:fabSize="normal"
-        app:layout_behavior="com.codepath.apps.TwitterClient.Java.ScrollAwareFABBehavior"
+        app:layout_behavior="com.codepath.apps.TwitterClient.myclass.ScrollAwareFABBehavior"
         app:layout_anchor="@+id/recycler_view"
         app:layout_anchorGravity="bottom|right|end" />
 

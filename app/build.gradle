@@ -46,6 +46,6 @@ dependencies {
     // Active Android
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
-
+    compile 'com.yqritc:android-scalablevideoview:1.0.3'
 
 }

@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.Adapters;
+package com.codepath.apps.TwitterClient.adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.codepath.apps.TwitterClient.Models.Tweet;
 import com.codepath.apps.TwitterClient.R;
+import com.codepath.apps.TwitterClient.models.Tweet;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,7 +41,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         @Bind(R.id.user_name_text) TextView mUserName;
         @Bind(R.id.body_text) TextView mBodyMessage;
         @Bind(R.id.created_at_text) TextView mCreatedAt;
-
+//        @Bind(R.id.video_view) ScalableVideoView mVideoView;
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

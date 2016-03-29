@@ -12,7 +12,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="com.codepath.apps.TwitterClient.Activities.DetailsActivity">
+        tools:context="com.codepath.apps.TwitterClient.activities.DetailsActivity">
 
         <ImageView
             android:id="@+id/profile_image_view"

@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.Activities;
+package com.codepath.apps.TwitterClient.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,14 +15,14 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
-import com.codepath.apps.TwitterClient.Adapters.TweetsAdapter;
-import com.codepath.apps.TwitterClient.Dialogs.ComposeDialog;
-import com.codepath.apps.TwitterClient.Java.DividerItemDecoration;
-import com.codepath.apps.TwitterClient.Java.EndlessRecyclerViewScrollListener;
-import com.codepath.apps.TwitterClient.Java.ItemClickSupport;
-import com.codepath.apps.TwitterClient.Java.TwitterApplication;
-import com.codepath.apps.TwitterClient.Java.TwitterClient;
-import com.codepath.apps.TwitterClient.Models.Tweet;
+import com.codepath.apps.TwitterClient.adapters.TweetsAdapter;
+import com.codepath.apps.TwitterClient.dialogs.ComposeDialog;
+import com.codepath.apps.TwitterClient.myclass.DividerItemDecoration;
+import com.codepath.apps.TwitterClient.myclass.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.TwitterClient.myclass.ItemClickSupport;
+import com.codepath.apps.TwitterClient.myclass.TwitterApplication;
+import com.codepath.apps.TwitterClient.myclass.TwitterClient;
+import com.codepath.apps.TwitterClient.models.Tweet;
 import com.codepath.apps.TwitterClient.R;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -45,7 +45,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeDialog
     private TwitterClient client;
     private ArrayList<Tweet> mTweets = new ArrayList<>();
     private TweetsAdapter mTweetsAdapter = new TweetsAdapter(mTweets);
-    private int mSinceId = 1;
     @Bind(R.id.store_house_ptr_frame) PtrClassicFrameLayout mPtrFrame;
     @Bind(R.id.recycler_view) RecyclerView mRecyclerView;
     @Bind(R.id.fab) FloatingActionButton mFActButton;

@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.Models;
+package com.codepath.apps.TwitterClient.models;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
