@@ -44,14 +44,18 @@ The following **additional** features are implemented:
 
 * [x] Make ActionMode not overlay Compose Fragment (few lines of code but took me an hour!!!)
 * [x] Show keyboard once Compose Fragment appears (few lines of code but took me an hour!!!)
-* [x] Make Cursor's color gray in Compose EditText
-* [x] Button is not enabled if the composing text field is null
+* [x] Make Cursor's color gray in **Compose EditText**
+* [x] **Tweet Button** is not enabled if the composing text field is null
 
 ## Video Walkthrough 
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/vuminhkhang1995/TwitterClient/blob/master/TwitterClient%20-%20Android.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
+Offline Tweets + Links Clikable:
+
+<img src='https://github.com/vuminhkhang1995/TwitterClient/blob/master/TwitterClient%20-%20Android%20Offline%20Data.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
