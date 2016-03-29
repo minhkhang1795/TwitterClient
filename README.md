@@ -46,6 +46,7 @@ The following **additional** features are implemented:
 * [x] Show keyboard once Compose Fragment appears (few lines of code but took me an hour!!!)
 * [x] Make Cursor's color gray in **Compose EditText**
 * [x] **Tweet Button** is not enabled if the composing text field is null
+* [x] User can sign out.
 
 ## Video Walkthrough 
 
