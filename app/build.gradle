@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.0"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.codepath.apps.restclienttemplate"
@@ -44,8 +44,9 @@ dependencies {
     // Design Support Library
     compile "com.android.support:design:23.0.0"
     // Active Android
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    // Video View
     compile 'com.yqritc:android-scalablevideoview:1.0.3'
-
+    // View Pager
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
 }

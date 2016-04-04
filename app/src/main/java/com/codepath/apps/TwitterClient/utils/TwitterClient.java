@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.myclass;
+package com.codepath.apps.TwitterClient.utils;
 
 import android.content.Context;
 
@@ -44,7 +44,46 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().get(apiUrl, params, handler);
 	}
 
-	// GET HOME TIMELINE
+    // GET MENTION TIMELINE
+	public void getMentionTimeline(int page, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+		// Specify RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("count", 20);
+		params.put("since_id", 1);
+		params.put("page", page);
+		// Execute the request
+		getClient().get(apiUrl, params, handler);
+	}
+
+	// GET USER TIMELINE
+	public void getUserTimeline(String screenName, int page, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		// Specify RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("count", 20);
+		params.put("since_id", 1);
+		params.put("screen_name", screenName);
+		params.put("page", page);
+		// Execute the request
+		getClient().get(apiUrl, params, handler);
+	}
+
+	// GET USER INFO
+	public void getUserInfo(AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("account/verify_credentials.json");
+		getClient().get(apiUrl, null, handler);
+	}
+
+    // GET USER INFO
+    public void getOtherUserInfo(String screenName, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("users/show.json");
+        RequestParams params = new RequestParams();
+        params.put("screen_name", screenName);
+        getClient().get(apiUrl, null, handler);
+    }
+
+	// POST TWEET
 	public void postTweet(String status, long replyID, AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses//update.json");
 		// Specify RequestParams.

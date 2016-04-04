@@ -1,4 +1,4 @@
-package com.codepath.apps.TwitterClient.myclass;
+package com.codepath.apps.TwitterClient.utils;
 
 import android.content.Context;
 

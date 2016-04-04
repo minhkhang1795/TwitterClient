@@ -16,13 +16,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <com.yqritc.scalablevideoview.ScalableVideoView
-        android:id="@+id/video_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="100dp"
-        app:scalableType="fitCenter"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

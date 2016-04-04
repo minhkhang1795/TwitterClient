@@ -4,40 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray"
+    android:background="@color/colorPrimaryLight"
     tools:context=".activities.TimelineActivity">
 
-    <in.srain.cube.views.ptr.PtrClassicFrameLayout
-        xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/store_house_ptr_frame"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/toolbar_main" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/toolbar_dropshadow" />
+
+        <com.astuetz.PagerSlidingTabStrip
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/colorPrimaryLight"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:pstsIndicatorColor="@color/white"
+            app:pstsShouldExpand="true"
+            app:pstsTextAllCaps="true"
+            app:pstsUnderlineHeight="2dp" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        cube_ptr:ptr_duration_to_close="300"
-        cube_ptr:ptr_duration_to_close_header="2000"
-        cube_ptr:ptr_keep_header_when_refresh="true"
-        cube_ptr:ptr_pull_to_fresh="false"
-        cube_ptr:ptr_ratio_of_header_height_to_refresh="1.2"
-        cube_ptr:ptr_resistance="1.7"
-        cube_ptr:fabSize="normal">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white">
-        </android.support.v7.widget.RecyclerView>
-    </in.srain.cube.views.ptr.PtrClassicFrameLayout>
+        android:background="@android:color/white"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right|end"
         android:layout_margin="24dp"
         android:clickable="true"
         android:src="@drawable/ic_compose"
         app:fabSize="normal"
-        app:layout_behavior="com.codepath.apps.TwitterClient.myclass.ScrollAwareFABBehavior"
-        app:layout_anchor="@+id/recycler_view"
-        app:layout_anchorGravity="bottom|right|end" />
+        app:layout_behavior="com.codepath.apps.TwitterClient.utils.ScrollAwareFABBehavior" />
 
 </android.support.design.widget.CoordinatorLayout>

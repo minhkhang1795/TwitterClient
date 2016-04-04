@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#55acee</color>
+    <color name="colorPrimaryTransparent">#3f55acee</color>
+    <color name="colorPrimaryTransparent2">#bb55acee</color>
     <color name="colorPrimaryDark">#3D9BE3</color>
     <color name="colorAccent">#55acee</color>
     <color name="colorPrimaryLight">#CC55acee</color>
     <color name="white">#ffffff</color>
     <color name="gray">#E3E3E3</color>
     <color name="grayDark">#bdbdbd</color>
+    <color name="blackHalfTrans">#d20b0b0b</color>
 </resources>

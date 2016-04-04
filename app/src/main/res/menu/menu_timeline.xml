@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-        <item
-            android:id="@+id/action_log_out"
-            android:icon="@drawable/ic_log_out"
-            app:showAsAction="always"
-            android:enabled="true"
-            android:checkable="true"
-            android:title="@string/log_out" >
-        </item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_log_out"
+        android:checkable="true"
+        android:enabled="true"
+        android:icon="@drawable/ic_log_out"
+        android:orderInCategory="3000"
+        android:title="@string/log_out"
+        app:showAsAction="ifRoom">
+    </item>
+    <item
+        android:id="@+id/profile"
+        android:checkable="true"
+        android:enabled="true"
+        android:icon="@drawable/ic_profile"
+        android:orderInCategory="2000"
+        android:title="@string/profile_menu_string"
+        app:showAsAction="always">
+    </item>
+
 </menu>

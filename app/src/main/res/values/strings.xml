@@ -15,5 +15,7 @@
     <string name="introduction_string_1">Welcome to Twitter</string>
     <string name="introduction_string_2">Get real-time update about what matters to you</string>
     <string name="log_out">Log out</string>
+    <string name="reply">Reply</string>
+    <string name="profile_menu_string">My Profile</string>
 
 </resources>

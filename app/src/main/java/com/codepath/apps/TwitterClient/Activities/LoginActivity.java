@@ -9,7 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
-import com.codepath.apps.TwitterClient.myclass.TwitterClient;
+import com.codepath.apps.TwitterClient.utils.TwitterClient;
 import com.codepath.apps.TwitterClient.R;
 import com.codepath.oauth.OAuthLoginActionBarActivity;
 
@@ -20,13 +20,28 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 
     @Bind(R.id.twitter_logo_image)
     ImageView twitterImage;
+    TranslateAnimation animationDown, animationUp;
+    Float originalY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        originalY = twitterImage.getY();
+        setupAnimation();
+    }
+
+    private void setupAnimation() {
+        animationDown = new TranslateAnimation(0.0f, 0.0f,
+                0.0f, 400.0f);          //  new TranslateAnimation(xFrom,xTo, yFrom,yTo)animationUp
+        animationUp = new TranslateAnimation(0.0f, 0.0f,
+                400.0f, 00.0f);
+        animationDown.setDuration(1000);  // animation duration
+        animationUp.setDuration(1000);
+        animationUp.setStartOffset(1000);
     }
 
 
@@ -42,11 +57,8 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
     @Override
     public void onLoginSuccess() {
         final Intent i = new Intent(this, TimelineActivity.class);
-        TranslateAnimation animation = new TranslateAnimation(0.0f, 0.0f,
-                0.0f, 400.0f);          //  new TranslateAnimation(xFrom,xTo, yFrom,yTo)
-        animation.setDuration(1000);  // animation duration
-        twitterImage.startAnimation(animation);  // start animation
-        animation.setAnimationListener(new Animation.AnimationListener() {
+        twitterImage.startAnimation(animationDown);  // start animation
+        animationDown.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -55,6 +67,7 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
             @Override
             public void onAnimationEnd(Animation animation) {
                 startActivity(i);
+                animation.setFillAfter(true);
             }
 
             @Override
@@ -78,4 +91,11 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
         getClient().connect();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (twitterImage.getY() != originalY) {
+            twitterImage.startAnimation(animationUp);
+        }
+    }
 }

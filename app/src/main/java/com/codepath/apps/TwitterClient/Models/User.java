@@ -31,6 +31,33 @@ public class User extends Model implements Parcelable {
     @Column(name = "image_url")
     private String mImageUrl;
 
+    @Column(name = "background_url")
+    private String mBackgroundUrl;
+
+    public String getmBackgroundUrl() {
+        return mBackgroundUrl;
+    }
+
+    public void setmBackgroundUrl(String mBackgroundUrl) {
+        this.mBackgroundUrl = mBackgroundUrl;
+    }
+
+    public void setmName(String mName) {
+        this.mName = mName;
+    }
+
+    public void setmId(long mId) {
+        this.mId = mId;
+    }
+
+    public void setmScreenName(String mScreenName) {
+        this.mScreenName = mScreenName;
+    }
+
+    public void setmImageUrl(String mImageUrl) {
+        this.mImageUrl = mImageUrl;
+    }
+
     public User() {
         super();
     }
@@ -62,6 +89,8 @@ public class User extends Model implements Parcelable {
             user.mId = jsonObject.getLong("id");
             user.mScreenName = jsonObject.getString("screen_name");
             user.mImageUrl = jsonObject.getString("profile_image_url");
+            user.mBackgroundUrl = jsonObject.getString("profile_banner_url");
+            if (user.mBackgroundUrl != null) user.mBackgroundUrl += "/600x200";
             user.save();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -81,7 +110,7 @@ public class User extends Model implements Parcelable {
                 new Select().from(User.class).where("remote_id = ?", rId).executeSingle();
         if (existingUser != null) {
             // found and return existing
-            return existingUser;
+            return User.fromJSON(jsonObject);
         } else {
             // create and return new user
             User user = User.fromJSON(jsonObject);

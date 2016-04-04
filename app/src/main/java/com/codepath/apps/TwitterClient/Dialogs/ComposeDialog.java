@@ -57,7 +57,7 @@ public class ComposeDialog extends DialogFragment {
 
     // Defines the listener interface
     public interface ComposeDialogListener {
-        void onFinishEditDialog(String inputText, long replyID);
+        void onFinishComposeDialog(String inputText, long replyID);
     }
 
 
@@ -129,7 +129,7 @@ public class ComposeDialog extends DialogFragment {
     private void onCompose() {
         // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
         ComposeDialogListener listener = (ComposeDialogListener) getActivity();
-        listener.onFinishEditDialog(mComposeText.getText().toString(), replyID);
+        listener.onFinishComposeDialog(mComposeText.getText().toString(), replyID);
         dismiss();
     }
 

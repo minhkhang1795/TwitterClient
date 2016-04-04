@@ -1,32 +1,29 @@
 package com.codepath.apps.TwitterClient.activities;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.util.Linkify;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.codepath.apps.TwitterClient.dialogs.ComposeDialog;
-import com.codepath.apps.TwitterClient.myclass.TwitterApplication;
-import com.codepath.apps.TwitterClient.myclass.TwitterClient;
-import com.codepath.apps.TwitterClient.models.Tweet;
 import com.codepath.apps.TwitterClient.R;
+import com.codepath.apps.TwitterClient.dialogs.ComposeDialog;
+import com.codepath.apps.TwitterClient.models.Tweet;
+import com.codepath.apps.TwitterClient.utils.TwitterApplication;
+import com.codepath.apps.TwitterClient.utils.TwitterClient;
+import com.codepath.apps.TwitterClient.utils.Utils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,7 +33,6 @@ import butterknife.ButterKnife;
 
 public class DetailsActivity extends AppCompatActivity implements ComposeDialog.ComposeDialogListener {
 
-    Tweet tweet;
     @Bind(R.id.profile_image_view)
     ImageView mProfileImageView;
     @Bind(R.id.tweet_image_view)
@@ -51,49 +47,55 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
     TextView mCreatedAt;
     @Bind(R.id.reply_button)
     TextView mReplyButton;
+    @Bind(R.id.toolbar)
+
+    Toolbar toolbar;
+    Tweet tweet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
-        Bundle bundle = this.getIntent().getExtras();
-        tweet = bundle.getParcelable("tweet");
+
+        getData();
         setupView();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // This is the up button
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setupView() {
         mBodyMessage.setText(tweet.getmBody());
         Linkify.addLinks(mBodyMessage, Linkify.WEB_URLS);
-        String time = null;
-        time = setTime(tweet.getmCreatedAt());
+        String time = getFormatTime(tweet.getmCreatedAt());
+
         mCreatedAt.setText(time);
         mScreenName.setText("@" + tweet.getmUser().getmScreenName());
         mUserName.setText(tweet.getmUser().getmName());
-        final ImageView profileImageView = mProfileImageView;
-        Glide.with(this)
-                .load(tweet.getmUser().getmImageUrl())
-                .asBitmap().into(new BitmapImageViewTarget(profileImageView) {
-            @Override
-            protected void setResource(Bitmap resource) {
-                RoundedBitmapDrawable circularBitmapDrawable =
-                        RoundedBitmapDrawableFactory.create(getResources(), resource);
-                circularBitmapDrawable.setCornerRadius(6);
-                profileImageView.setImageDrawable(circularBitmapDrawable);
-            }
-        });
+
+        Utils.inflateImage(this, tweet.getmUser().getmImageUrl(), mProfileImageView);
         if (tweet.getmImageUrl() != null) {
             mTweetImage.setVisibility(View.VISIBLE);
-            final ImageView tweetImageView = mTweetImage;
-            Glide.with(this)
-                    .load(tweet.getmImageUrl())
-                    .into(tweetImageView);
-        } else {
-            mTweetImage.setVisibility(View.GONE);
+            Utils.inflateImage(this, tweet.getmImageUrl(), mTweetImage);
+        } else mTweetImage.setVisibility(View.GONE);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Tweet");
         }
     }
 
-    private static String setTime(String rawJsonDate) {
+    private static String getFormatTime(String rawJsonDate) {
         Date date = null;
         try {
             date = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy").parse(rawJsonDate);
@@ -115,8 +117,8 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
     }
 
     @Override
-    public void onFinishEditDialog(String inputText, long replyID) {
-        if (isOnline()) {
+    public void onFinishComposeDialog(String inputText, long replyID) {
+        if (Utils.isOnline()) {
             TwitterClient client = TwitterApplication.getRestClient();
             client.postTweet(inputText, replyID, new JsonHttpResponseHandler() {
                 @Override
@@ -133,15 +135,8 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
         }
     }
 
-    public boolean isOnline() {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public void getData() {
+        Bundle bundle = this.getIntent().getExtras();
+        tweet = bundle.getParcelable("tweet");
     }
 }

@@ -2,6 +2,7 @@ package com.codepath.apps.TwitterClient.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.format.DateUtils;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
@@ -12,7 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by duyvu on 3/25/16.
@@ -32,10 +36,13 @@ public class Tweet extends Model implements Parcelable {
     private String mCreatedAt;
 
     @Column(name = "image_url")
-    private String mImageUrl;
+    private String mImageUrl = "";
+
+    @Column(name = "video_url")
+    private String mVideoUrl = "";
 
     @Column(name = "body_url")
-    private String mBodyUrl;
+    private String mBodyUrl = "";
 
     public Tweet() {
         super();
@@ -69,6 +76,33 @@ public class Tweet extends Model implements Parcelable {
         return mCreatedAt;
     }
 
+    public String getRelativeTimeAgo(String rawJsonDate){
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        relativeDate = relativeDate.replaceAll(" minutes ago", "m");
+        relativeDate = relativeDate.replaceAll(" minute ago", "m");
+        relativeDate = relativeDate.replaceAll(" hours ago", "h");
+        relativeDate = relativeDate.replaceAll(" hour ago", "h");
+        return relativeDate;
+    }
+
+    public String getmVideoUrl() {
+        return mVideoUrl;
+    }
+
+    public void setmVideoUrl(String mVideoUrl) {
+        this.mVideoUrl = mVideoUrl;
+    }
+
     public static Tweet fromJSON(JSONObject jsonObject) {
         Tweet tweet = new Tweet();
         try {
@@ -78,14 +112,20 @@ public class Tweet extends Model implements Parcelable {
             tweet.mUser = User.findOrCreateFromJson(jsonObject.getJSONObject("user"));
             if (jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type").equals("photo")) {
                 tweet.mImageUrl = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("media_url");
-            } else {
-                tweet.mImageUrl = null;
             }
             tweet.mBodyUrl = jsonObject.getJSONObject("entities").getJSONArray("urls").getJSONObject(0).getString("display_url");
             tweet.mBody = clearUrlInString(tweet.mBody);
-            if (tweet.mBodyUrl.length() > 0) {
-                tweet.mBody += tweet.mBodyUrl;
+            if (tweet.mBodyUrl.length() > 0) tweet.mBody += tweet.mBodyUrl;
+
+
+            JSONObject media = jsonObject.getJSONObject("extended_entities")
+                    .getJSONArray("media")
+                    .getJSONObject(0);
+            if (!media.getString("type").equals("photo")) {
+                tweet.mVideoUrl = media.getJSONObject("video_info")
+                        .getJSONArray("variants").getJSONObject(0).getString("url");
             }
+
             tweet.save();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -105,7 +145,7 @@ public class Tweet extends Model implements Parcelable {
                 new Select().from(Tweet.class).where("remote_id = ?", rId).executeSingle();
         if (existingTweet != null) {
             // found and return existing
-            return existingTweet;
+            return Tweet.fromJSON(jsonObject);
         } else {
             // create and return new user
             Tweet tweet = Tweet.fromJSON(jsonObject);
