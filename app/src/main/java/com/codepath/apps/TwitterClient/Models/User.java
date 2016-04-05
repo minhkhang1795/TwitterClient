@@ -19,23 +19,20 @@ import java.util.List;
 @Table(name = "Users")
 public class User extends Model implements Parcelable {
 
-    @Column(name = "name")
-    private String mName;
+    public Long getmFollowersCount() {
+        return mFollowersCount;
+    }
 
-    @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
-    private long mId;
+    public void setmFollowersCount(Long mFollowersCount) {
+        this.mFollowersCount = mFollowersCount;
+    }
 
-    @Column(name = "screen_name")
-    private String mScreenName;
+    public Long getmFriendsCount() {
+        return mFriendsCount;
+    }
 
-    @Column(name = "image_url")
-    private String mImageUrl;
-
-    @Column(name = "background_url")
-    private String mBackgroundUrl;
-
-    public String getmBackgroundUrl() {
-        return mBackgroundUrl;
+    public void setmFriendsCount(Long mFriendsCount) {
+        this.mFriendsCount = mFriendsCount;
     }
 
     public void setmBackgroundUrl(String mBackgroundUrl) {
@@ -82,6 +79,31 @@ public class User extends Model implements Parcelable {
         return mImageUrl;
     }
 
+    @Column(name = "name")
+    private String mName;
+
+    @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    private long mId;
+
+    @Column(name = "screen_name")
+    private String mScreenName;
+
+    @Column(name = "image_url")
+    private String mImageUrl;
+
+    @Column(name = "background_url")
+    private String mBackgroundUrl;
+
+    @Column(name = "followers_count")
+    private Long mFollowersCount;
+
+    @Column(name = "friends_count")
+    private Long mFriendsCount;
+
+    public String getmBackgroundUrl() {
+        return mBackgroundUrl;
+    }
+
     public static User fromJSON(JSONObject jsonObject) {
         User user = new User();
         try {
@@ -89,8 +111,10 @@ public class User extends Model implements Parcelable {
             user.mId = jsonObject.getLong("id");
             user.mScreenName = jsonObject.getString("screen_name");
             user.mImageUrl = jsonObject.getString("profile_image_url");
-            user.mBackgroundUrl = jsonObject.getString("profile_banner_url");
+            user.mBackgroundUrl = jsonObject.optString("profile_banner_url");
             if (user.mBackgroundUrl != null) user.mBackgroundUrl += "/600x200";
+            user.mFollowersCount = jsonObject.getLong("followers_count");
+            user.mFriendsCount = jsonObject.getLong("friends_count");
             user.save();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -150,4 +174,6 @@ public class User extends Model implements Parcelable {
             return new User[size];
         }
     };
+
+
 }

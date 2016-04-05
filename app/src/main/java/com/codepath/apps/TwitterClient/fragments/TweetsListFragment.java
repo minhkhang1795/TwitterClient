@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.codepath.apps.TwitterClient.R;
 import com.codepath.apps.TwitterClient.activities.DetailsActivity;
 import com.codepath.apps.TwitterClient.adapters.TweetsAdapter;
-import com.codepath.apps.TwitterClient.dialogs.ComposeDialog;
 import com.codepath.apps.TwitterClient.models.Tweet;
 import com.codepath.apps.TwitterClient.utils.DividerItemDecoration;
 import com.codepath.apps.TwitterClient.utils.EndlessRecyclerViewScrollListener;
@@ -39,7 +38,7 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 /**
  * Created by duyvu on 4/1/16.
  */
-public abstract class TweetsListFragment extends Fragment implements ComposeDialog.ComposeDialogListener {
+public abstract class TweetsListFragment extends Fragment {
 
     @Bind(R.id.store_house_ptr_frame)
     PtrClassicFrameLayout mPtrFrame;
@@ -54,6 +53,10 @@ public abstract class TweetsListFragment extends Fragment implements ComposeDial
 
     protected abstract void callApi(int page);
     protected abstract void loadOfflineData();
+    public interface TweetsListFragmentListener {
+        void showProgressBarListener();
+        void hideProgressBarListener();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,22 +66,17 @@ public abstract class TweetsListFragment extends Fragment implements ComposeDial
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = null;
-        if (isCalledFromProfile) {
-            view = inflater.inflate(R.layout.fragment_tweet_list_profile, container, false);
-        } else {
-            view = inflater.inflate(R.layout.fragment_tweet_list, container, false);
-        }
+        View view = inflater.inflate(R.layout.fragment_tweet_list, container, false);
         ButterKnife.bind(this, view);
+        setupPullToRefresh();
+        setupRecyclerView();
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupPullToRefresh();
         populateTimeline(1);
-        setupRecyclerView();
     }
 
     private void setupRecyclerView() {
@@ -106,12 +104,14 @@ public abstract class TweetsListFragment extends Fragment implements ComposeDial
         mTweets.addAll(tweets);
         mTweetsAdapter.notifyDataSetChanged();
         mPtrFrame.refreshComplete();
+        hideProgressbar();
     }
 
     public void addAllItemRangeInserted(List<Tweet> tweets) {
         mTweets.addAll(tweets);
         mTweetsAdapter.notifyItemRangeInserted(mTweetsAdapter.getItemCount(), mTweets.size() - 1);
         mPtrFrame.refreshComplete();
+        hideProgressbar();
     }
 
     public void clear() {
@@ -134,7 +134,18 @@ public abstract class TweetsListFragment extends Fragment implements ComposeDial
         });
     }
 
-    @Override
+    protected void populateTimeline(int page) {
+        if (page == 1) showProgressbar();
+        if (Utils.isOnline()) {
+            if (page == 1) {
+                clear();
+            }
+            callApi(page);
+        } else {
+            loadOfflineData();
+        }
+    }
+
     public void onFinishComposeDialog(String inputText, long replyID) {
         if (Utils.isOnline()) {
             client.postTweet(inputText, replyID, new JsonHttpResponseHandler() {
@@ -155,14 +166,15 @@ public abstract class TweetsListFragment extends Fragment implements ComposeDial
         }
     }
 
-    protected void populateTimeline(int page){
-        if (Utils.isOnline()) {
-            if (page == 1) {
-                clear();
-            }
-            callApi(page);
-        } else {
-            loadOfflineData();
-        }
+    protected void showProgressbar() {
+        // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
+        TweetsListFragmentListener listener = (TweetsListFragmentListener) getActivity();
+        listener.showProgressBarListener();
+    }
+
+    protected void hideProgressbar() {
+        // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
+        TweetsListFragmentListener listener = (TweetsListFragmentListener) getActivity();
+        listener.hideProgressBarListener();
     }
 }

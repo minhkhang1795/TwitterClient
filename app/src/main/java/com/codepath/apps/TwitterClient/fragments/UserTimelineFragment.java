@@ -5,7 +5,6 @@ package com.codepath.apps.TwitterClient.fragments;
  */
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
@@ -42,8 +41,7 @@ public class UserTimelineFragment extends TweetsListFragment {
             // Success
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("DEBUG", "GERE");
-                addAllItemRangeInserted(Tweet.fromJSONArray(response));
+                addAll(Tweet.fromJSONArray(response));
             }
 
             // Failure
@@ -52,6 +50,7 @@ public class UserTimelineFragment extends TweetsListFragment {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
                 Toast.makeText(getActivity(), "Request Limit Exceeded 2", Toast.LENGTH_LONG).show();
                 mPtrFrame.refreshComplete();
+                hideProgressbar();
             }
         });
     }

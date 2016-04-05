@@ -1,11 +1,13 @@
 package com.codepath.apps.TwitterClient.dialogs;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.codepath.apps.TwitterClient.R;
+import com.codepath.apps.TwitterClient.adapters.TweetsAdapter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,6 +43,7 @@ public class ComposeDialog extends DialogFragment {
     ImageView mProfileImageView;
     @Bind(R.id.close_button)
     ImageButton mCloseButton;
+
     long replyID = -1;
 
     public ComposeDialog() {

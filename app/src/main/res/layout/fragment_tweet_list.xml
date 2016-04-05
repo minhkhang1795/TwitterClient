@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/gray"
+    android:id="@+id/fragment_tweet_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -27,5 +28,11 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" >
         </android.support.v7.widget.RecyclerView>
     </in.srain.cube.views.ptr.PtrClassicFrameLayout>
-
+    <ProgressBar
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/pbProgressLoading"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
 </android.support.design.widget.CoordinatorLayout>

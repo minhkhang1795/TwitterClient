@@ -30,7 +30,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
             // Success
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                addAllItemRangeInserted(Tweet.fromJSONArray(response));
+                addAll(Tweet.fromJSONArray(response));
             }
 
             // Failure
@@ -39,6 +39,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
                 Toast.makeText(getActivity(), "Request Limit Exceeded 2", Toast.LENGTH_LONG).show();
                 mPtrFrame.refreshComplete();
+                hideProgressbar();
             }
         });
     }

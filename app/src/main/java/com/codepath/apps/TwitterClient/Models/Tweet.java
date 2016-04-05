@@ -1,13 +1,18 @@
 package com.codepath.apps.TwitterClient.models;
 
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.format.DateUtils;
+import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
+import com.codepath.apps.TwitterClient.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,26 +28,58 @@ import java.util.Locale;
  */
 @Table(name = "Tweets")
 public class Tweet extends Model implements Parcelable {
-    @Column(name = "body")
-    private String mBody;
 
-    @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
-    private long mId; // unique ID for a tweet
+    public Boolean getmIsRetweeted() {
+        return mIsRetweeted;
+    }
 
-    @Column(name = "User", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
-    private User mUser;
+    public void setmIsRetweeted(Boolean mIsRetweeted) {
+        this.mIsRetweeted = mIsRetweeted;
+    }
 
-    @Column(name = "created_at")
-    private String mCreatedAt;
+    public Boolean getmIsFavorited() {
+        return mIsFavorited;
+    }
 
-    @Column(name = "image_url")
-    private String mImageUrl = "";
+    public void setmIsFavorited(Boolean mIsFavorited) {
+        this.mIsFavorited = mIsFavorited;
+    }
 
-    @Column(name = "video_url")
-    private String mVideoUrl = "";
+    public int getmRetweetCount() {
+        return mRetweetCount;
+    }
 
-    @Column(name = "body_url")
-    private String mBodyUrl = "";
+    public void setmRetweetCount(int mRetweetCount) {
+        this.mRetweetCount = mRetweetCount;
+    }
+
+    public int getmFavoriteCount() {
+        return mFavoriteCount;
+    }
+
+    public void setmFavoriteCount(int mFavoriteCount) {
+        this.mFavoriteCount = mFavoriteCount;
+    }
+
+    public void setmBody(String mBody) {
+        this.mBody = mBody;
+    }
+
+    public void setmId(long mId) {
+        this.mId = mId;
+    }
+
+    public void setmUser(User mUser) {
+        this.mUser = mUser;
+    }
+
+    public void setmCreatedAt(String mCreatedAt) {
+        this.mCreatedAt = mCreatedAt;
+    }
+
+    public void setmImageUrl(String mImageUrl) {
+        this.mImageUrl = mImageUrl;
+    }
 
     public Tweet() {
         super();
@@ -64,19 +101,43 @@ public class Tweet extends Model implements Parcelable {
         return mId;
     }
 
-    public String getmBodyUrl() {
-        return mBodyUrl;
-    }
-
-    public void setmBodyUrl(String mBodyUrl) {
-        this.mBodyUrl = mBodyUrl;
-    }
-
     public String getmCreatedAt() {
         return mCreatedAt;
     }
 
-    public String getRelativeTimeAgo(String rawJsonDate){
+    @Column(name = "body")
+    private String mBody;
+
+    @Column(name = "remote_id", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+    private long mId; // unique ID for a tweet
+
+    @Column(name = "User", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
+    private User mUser;
+
+    @Column(name = "created_at")
+    private String mCreatedAt;
+
+    @Column(name = "image_url")
+    private String mImageUrl = "";
+
+    @Column(name = "video_url")
+    private String mVideoUrl = "";
+
+    @Column(name = "favorite_count")
+    private int mFavoriteCount;
+
+    @Column(name = "retweet_count")
+    private int mRetweetCount;
+
+    @Column(name = "is_retweeted")
+    private Boolean mIsRetweeted;
+
+    @Column(name = "is_favorited")
+    private Boolean mIsFavorited;
+
+
+
+    public String getRelativeTimeAgo(String rawJsonDate) {
         String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
         SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
         sf.setLenient(true);
@@ -88,10 +149,12 @@ public class Tweet extends Model implements Parcelable {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        relativeDate = relativeDate.replaceAll(" minutes ago", "m");
-        relativeDate = relativeDate.replaceAll(" minute ago", "m");
+        relativeDate = relativeDate.replaceAll("in ", "");
+        relativeDate = relativeDate.replaceAll(" minutes", "m");
+        relativeDate = relativeDate.replaceAll(" minute", "m");
         relativeDate = relativeDate.replaceAll(" hours ago", "h");
         relativeDate = relativeDate.replaceAll(" hour ago", "h");
+        relativeDate = relativeDate.replaceAll(" ago", "");
         return relativeDate;
     }
 
@@ -104,32 +167,52 @@ public class Tweet extends Model implements Parcelable {
     }
 
     public static Tweet fromJSON(JSONObject jsonObject) {
+        Log.d("DEBUG", jsonObject.toString());
         Tweet tweet = new Tweet();
         try {
-            tweet.mBody = jsonObject.getString("text");
-            tweet.mId = jsonObject.getLong("id");
-            tweet.mCreatedAt = jsonObject.getString("created_at");
+            if (jsonObject.has("retweeted_status"))
+                jsonObject = jsonObject.getJSONObject("retweeted_status");
+            String idString = jsonObject.getString("id_str");
             tweet.mUser = User.findOrCreateFromJson(jsonObject.getJSONObject("user"));
-            if (jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("type").equals("photo")) {
-                tweet.mImageUrl = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).getString("media_url");
-            }
-            tweet.mBodyUrl = jsonObject.getJSONObject("entities").getJSONArray("urls").getJSONObject(0).getString("display_url");
+            tweet.mId = Long.valueOf(idString);
+            tweet.mCreatedAt = jsonObject.getString("created_at");
+            tweet.mFavoriteCount = jsonObject.getInt("favorite_count");
+            tweet.mRetweetCount = jsonObject.getInt("retweet_count");
+            tweet.mIsFavorited = jsonObject.getBoolean("favorited");
+            tweet.mIsRetweeted = jsonObject.getBoolean("retweeted");
+
+            tweet.mBody = jsonObject.getString("text");
             tweet.mBody = clearUrlInString(tweet.mBody);
-            if (tweet.mBodyUrl.length() > 0) tweet.mBody += tweet.mBodyUrl;
 
-
-            JSONObject media = jsonObject.getJSONObject("extended_entities")
-                    .getJSONArray("media")
-                    .getJSONObject(0);
-            if (!media.getString("type").equals("photo")) {
-                tweet.mVideoUrl = media.getJSONObject("video_info")
-                        .getJSONArray("variants").getJSONObject(0).getString("url");
+            JSONObject mediaJSONObject;
+            if (jsonObject.getJSONObject("entities").has("media")) {
+                if(jsonObject.getJSONObject("entities").getJSONArray("media").length() != 0) {
+                    mediaJSONObject = jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0);
+                    if (mediaJSONObject.getString("type").equals("photo"))
+                        tweet.mImageUrl = mediaJSONObject.getString("media_url");
+                }
             }
 
-            tweet.save();
+            if (jsonObject.has("extended_entities")) {
+                JSONObject media = jsonObject.getJSONObject("extended_entities")
+                        .getJSONArray("media")
+                        .getJSONObject(0);
+                if (!media.getString("type").equals("photo")) {
+                    tweet.mVideoUrl = media.getJSONObject("video_info")
+                            .getJSONArray("variants").getJSONObject(0).getString("url");
+                }
+            }
+
+            String correctURLString = "";
+            if (jsonObject.getJSONObject("entities").getJSONArray("urls").length() != 0)
+                correctURLString = jsonObject.getJSONObject("entities").getJSONArray("urls").getJSONObject(0).getString("display_url");
+            tweet.mBody += correctURLString;
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
+        tweet.save();
         return tweet;
     }
 
@@ -172,8 +255,8 @@ public class Tweet extends Model implements Parcelable {
         return tweets;
     }
 
-    private static String clearUrlInString(String mBodyUrl) {
-        return mBodyUrl.replaceAll("https:\\//t.co\\/\\w*", "");
+    private static String clearUrlInString(String bodyString) {
+        return bodyString.replaceAll("https:\\//t.co\\/\\w*", "");
     }
 
     @Override
@@ -187,7 +270,10 @@ public class Tweet extends Model implements Parcelable {
         dest.writeLong(mId);
         dest.writeString(mCreatedAt);
         dest.writeString(mImageUrl);
-        dest.writeString(mBodyUrl);
+        dest.writeInt(mFavoriteCount);
+        dest.writeInt(mRetweetCount);
+        dest.writeByte((byte) (mIsFavorited ? 1 : 0));
+        dest.writeByte((byte) (mIsRetweeted ? 1 : 0));
         dest.writeParcelable(mUser, flags);
     }
 
@@ -196,7 +282,10 @@ public class Tweet extends Model implements Parcelable {
         this.mId = in.readLong();
         this.mCreatedAt = in.readString();
         this.mImageUrl = in.readString();
-        this.mBodyUrl = in.readString();
+        this.mFavoriteCount = in.readInt();
+        this.mRetweetCount = in.readInt();
+        this.mIsFavorited = in.readByte() != 0;
+        this.mIsRetweeted = in.readByte() != 0;
         this.mUser = in.readParcelable(User.class.getClassLoader());
     }
 
@@ -210,4 +299,24 @@ public class Tweet extends Model implements Parcelable {
                     return new Tweet[size];
                 }
             };
+
+    public static void setFavoriteBtnOn(ImageButton button, TextView text, Resources resources) {
+        button.setBackground(resources.getDrawable(R.drawable.favorite_on));
+        text.setTextColor(resources.getColor(R.color.colorYellow));
+    }
+
+    public static void setFavoriteBtnOff(ImageButton button, TextView text, Resources resources) {
+        button.setBackground(resources.getDrawable(R.drawable.favorite_off));
+        text.setTextColor(resources.getColor(R.color.grayDark));
+    }
+
+    public static void setRetweetBtnOn(ImageButton button, TextView text, Resources resources) {
+        button.setBackground(resources.getDrawable(R.drawable.retweet_on));
+        text.setTextColor(resources.getColor(R.color.colorGreen));
+    }
+
+    public static void setRetweetBtnOff(ImageButton button, TextView text, Resources resources) {
+        button.setBackground(resources.getDrawable(R.drawable.retweet_off));
+        text.setTextColor(resources.getColor(R.color.grayDark));
+    }
 }

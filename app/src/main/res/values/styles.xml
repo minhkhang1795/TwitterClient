@@ -52,7 +52,29 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:windowSoftInputMode">stateVisible|adjustResize</item>
-
     </style>
 
+    <style name="ReplyButton" parent="@android:style/Widget.ImageButton">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:background">@drawable/reply_off</item>
+        <item name="android:solidColor">@color/grayDark</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="RetweetButtonEnable" parent="@android:style/Widget.ImageButton">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:background">@drawable/retweet_on</item>
+        <item name="android:colorBackground">@color/grayDark</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="RetweetButtonUnenable" parent="@android:style/Widget.ImageButton">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:background">@drawable/retweet_off</item>
+        <item name="android:tint">@color/colorPrimary</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
 </resources>

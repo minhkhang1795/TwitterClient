@@ -6,6 +6,8 @@
     <color name="colorPrimaryDark">#3D9BE3</color>
     <color name="colorAccent">#55acee</color>
     <color name="colorPrimaryLight">#CC55acee</color>
+    <color name="colorGreen">#8BC34A</color>
+    <color name="colorYellow">#FFC107</color>
     <color name="white">#ffffff</color>
     <color name="gray">#E3E3E3</color>
     <color name="grayDark">#bdbdbd</color>

@@ -6,8 +6,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,11 +47,17 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
     TextView mBodyMessage;
     @Bind(R.id.created_at_text)
     TextView mCreatedAt;
-    @Bind(R.id.reply_button)
-    TextView mReplyButton;
     @Bind(R.id.toolbar)
-
     Toolbar toolbar;
+    @Bind(R.id.retweet_text_view) TextView mRetweetCount;
+    @Bind(R.id.favorite_text_view) TextView mFavoriteCount;
+    @Bind(R.id.retweet_button)
+    ImageButton mRetweetButton;
+    @Bind(R.id.favorite_button)
+    ImageButton mFavoriteButton;
+    @Bind(R.id.reply_button)
+    ImageButton mReplyButton;
+
     Tweet tweet;
 
     @Override
@@ -57,7 +65,6 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
-
         getData();
         setupView();
     }
@@ -82,6 +89,10 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
         mCreatedAt.setText(time);
         mScreenName.setText("@" + tweet.getmUser().getmScreenName());
         mUserName.setText(tweet.getmUser().getmName());
+        mRetweetCount.setText(String.valueOf(tweet.getmRetweetCount()));
+        mFavoriteCount.setText(String.valueOf(tweet.getmFavoriteCount()));
+        setupFavoriteBtn();
+        setupRetweetBtn();
 
         Utils.inflateImage(this, tweet.getmUser().getmImageUrl(), mProfileImageView);
         if (tweet.getmImageUrl() != null) {
@@ -93,6 +104,116 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle("Tweet");
         }
+    }
+
+    private void setupFavoriteBtn() {
+        if (tweet.getmIsFavorited()) Tweet.setFavoriteBtnOn(mFavoriteButton, mFavoriteCount, getResources());
+        else Tweet.setFavoriteBtnOff(mFavoriteButton, mFavoriteCount, getResources());
+        mFavoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFavoriteButton.setClickable(false);
+                if (tweet.getmIsFavorited()) {
+                    // DESTROY FAVORITE
+                    TwitterApplication.getRestClient().destroyFavorite(tweet.getmId(), new JsonHttpResponseHandler() {
+                        // Success
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Tweet.setFavoriteBtnOff(mFavoriteButton, mFavoriteCount, getResources());
+                            tweet.setmFavoriteCount(tweet.getmFavoriteCount() - 1);
+                            mFavoriteButton.setClickable(true);
+                            tweet.setmIsFavorited(false);
+                            mFavoriteCount.setText(String.valueOf(tweet.getmFavoriteCount()));
+                        }
+
+                        // Failure
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                            mFavoriteButton.setClickable(true);
+                            Log.d("DEBUG", errorResponse.toString());
+                        }
+                    });
+
+                } else {
+                    // CREATE FAVORITE
+                    TwitterApplication.getRestClient().createFavorite(tweet.getmId(), new JsonHttpResponseHandler() {
+                        // Success
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Tweet.setFavoriteBtnOn(mFavoriteButton, mFavoriteCount, getResources());
+                            tweet.setmFavoriteCount(tweet.getmFavoriteCount() + 1);
+                            mFavoriteButton.setClickable(true);
+                            tweet.setmIsFavorited(true);
+                            mFavoriteCount.setText(String.valueOf(tweet.getmFavoriteCount()));
+                        }
+
+                        // Failure
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                            mFavoriteButton.setClickable(true);
+                            Log.d("DEBUG", errorResponse.toString());
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void setupRetweetBtn() {
+        if (tweet.getmIsRetweeted()) Tweet.setRetweetBtnOn(mRetweetButton, mRetweetCount, getResources());
+        else Tweet.setRetweetBtnOff(mRetweetButton, mRetweetCount, getResources());
+        mRetweetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRetweetButton.setClickable(false);
+                if (tweet.getmIsRetweeted()) {
+                    // DESTROY RETWEET
+                    TwitterApplication.getRestClient().destroyRetweet(tweet.getmId(), new JsonHttpResponseHandler() {
+                        // Success
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Tweet.setRetweetBtnOff(mRetweetButton, mRetweetCount, getResources());
+                            tweet.setmRetweetCount(tweet.getmRetweetCount() - 1);
+                            mRetweetButton.setClickable(true);
+                            tweet.setmIsRetweeted(false);
+                            mRetweetCount.setText(String.valueOf(tweet.getmRetweetCount()));
+                        }
+
+                        // Failure
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                            mRetweetButton.setClickable(true);
+                            Log.d("DEBUG", errorResponse.toString());
+                        }
+                    });
+
+                } else {
+                    // CREATE RETWEET
+                    TwitterApplication.getRestClient().createRetweet(tweet.getmId(), new JsonHttpResponseHandler() {
+                        // Success
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            Tweet.setRetweetBtnOn(mRetweetButton, mRetweetCount, getResources());
+                            tweet.setmRetweetCount(tweet.getmRetweetCount() + 1);
+                            mRetweetButton.setClickable(true);
+                            tweet.setmIsRetweeted(true);
+                            mRetweetCount.setText(String.valueOf(tweet.getmRetweetCount()));
+                        }
+
+                        // Failure
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                            mRetweetButton.setClickable(true);
+                            Log.d("DEBUG", errorResponse.toString());
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private static String getFormatTime(String rawJsonDate) {

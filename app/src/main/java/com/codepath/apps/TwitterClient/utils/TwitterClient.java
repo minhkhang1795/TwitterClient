@@ -75,26 +75,83 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().get(apiUrl, null, handler);
 	}
 
-    // GET USER INFO
+    // GET OTHER USER INFO
     public void getOtherUserInfo(String screenName, AsyncHttpResponseHandler handler) {
         String apiUrl = getApiUrl("users/show.json");
         RequestParams params = new RequestParams();
         params.put("screen_name", screenName);
-        getClient().get(apiUrl, null, handler);
+        getClient().get(apiUrl, params, handler);
     }
 
 	// POST TWEET
 	public void postTweet(String status, long replyID, AsyncHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses//update.json");
-		// Specify RequestParams.
 		RequestParams params = new RequestParams();
-		if (replyID != -1) {
-			params.put("in_reply_to_status_id", replyID);
-		}
+		if (replyID != -1) params.put("in_reply_to_status_id", replyID);
 		params.put("status", status);
-		// Execute the request
 		getClient().post(apiUrl, params, handler);
 	}
+
+    // CREATE FAVORITE
+    public void createFavorite(long id, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("favorites/create.json");
+        RequestParams params = new RequestParams();
+        params.put("id", id);
+        getClient().post(apiUrl, params, handler);
+    }
+
+    // DESTROY FAVORITE
+    public void destroyFavorite(long id, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("favorites/destroy.json");
+        RequestParams params = new RequestParams();
+        params.put("id", id);
+        getClient().post(apiUrl, params, handler);
+    }
+
+    // CREATE RETWEET
+    public void createRetweet(long id, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/retweet/" + id + ".json");
+        getClient().post(apiUrl, handler);
+    }
+
+    // DESTROY RETWEET
+    public void destroyRetweet(long id, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/unretweet/" + id + ".json");
+        getClient().post(apiUrl, handler);
+    }
+
+	// GET FOLLOWER LIST
+	public void getFollowers(Long userID, int page, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("followers/list.json");
+		RequestParams params = new RequestParams();
+		params.put("user_id", userID);
+		params.put("count", 20);
+		params.put("since_id", 1);
+		params.put("page", page);
+		getClient().get(apiUrl, params, handler);
+	}
+
+	// GET FOLLOWING LIST
+	public void getFollowing(Long userID, int page, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("friends/list.json");
+		RequestParams params = new RequestParams();
+		params.put("user_id", userID);
+		params.put("count", 20);
+		params.put("since_id", 1);
+		params.put("page", page);
+		getClient().get(apiUrl, params, handler);
+	}
+
+    // GET FAVORITE LIST
+    public void getFavoriteList(String screenName, int page, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("favorites/list.json");
+        RequestParams params = new RequestParams();
+        params.put("screen_name", screenName);
+        params.put("count", 20);
+        params.put("since_id", 1);
+        params.put("page", page);
+        getClient().get(apiUrl, params, handler);
+    }
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
 	 * 	  i.e getApiUrl("statuses/home_timeline.json");

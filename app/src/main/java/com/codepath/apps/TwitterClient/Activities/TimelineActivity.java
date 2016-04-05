@@ -6,26 +6,30 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.TwitterClient.R;
 import com.codepath.apps.TwitterClient.dialogs.ComposeDialog;
 import com.codepath.apps.TwitterClient.fragments.HomeTimelineFragment;
 import com.codepath.apps.TwitterClient.fragments.MentionTimelineFragment;
+import com.codepath.apps.TwitterClient.fragments.TweetsListFragment;
+import com.codepath.apps.TwitterClient.utils.SmartFragmentStatePagerAdapter;
 import com.codepath.apps.TwitterClient.utils.TwitterApplication;
 import com.codepath.apps.TwitterClient.utils.TwitterClient;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements
+        ComposeDialog.ComposeDialogListener, TweetsListFragment.TweetsListFragmentListener {
 
     @Bind(R.id.viewpager)
     ViewPager viewPager;
@@ -35,6 +39,10 @@ public class TimelineActivity extends AppCompatActivity {
     FloatingActionButton mFActButton;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    @Bind(R.id.pbProgressLoading)
+    ProgressBar progressBar;
+
+    private SmartFragmentStatePagerAdapter adapterViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +54,8 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void initialSetup() {
         setSupportActionBar(toolbar);
-        viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+        adapterViewPager = new TweetsPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapterViewPager);
         tabStrip.setViewPager(viewPager);
         mFActButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +96,17 @@ public class TimelineActivity extends AppCompatActivity {
         finish();
     }
 
-    public class TweetsPagerAdapter extends FragmentPagerAdapter {
+    @Override
+    public void showProgressBarListener() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBarListener() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
         private String tabTitles[] = {"Home", "Mentions"};
 
         public TweetsPagerAdapter(FragmentManager fm) {
@@ -116,4 +135,13 @@ public class TimelineActivity extends AppCompatActivity {
         composeDialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.Dialog_FullScreen);
         composeDialog.show(fm, "fragment_compose");
     }
+
+    @Override
+    public void onFinishComposeDialog(String inputText, long replyID) {
+        Toast.makeText(getBaseContext(), inputText, Toast.LENGTH_LONG).show();
+        HomeTimelineFragment fragment = (HomeTimelineFragment) adapterViewPager.getRegisteredFragment(0);
+        fragment.onFinishComposeDialog(inputText, replyID);
+    }
+
+
 }
