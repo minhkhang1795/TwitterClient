@@ -15,7 +15,7 @@ import java.io.IOException;
  * Created by duyvu on 4/3/16.
  */
 public class Utils {
-    public static void inflateImage(final Context context, String url, final ImageView iv) {
+    public static void inflateRoundedImage(final Context context, String url, final ImageView iv) {
         if (!url.equals("")) {
             Transformation transformation = new RoundedTransformationBuilder()
                     .cornerRadiusDp(4)
@@ -24,6 +24,7 @@ public class Utils {
             Picasso.with(context)
                     .load(url)
                     .transform(transformation)
+                    .placeholder(R.drawable.default_placeholder)
                     .into(iv);
         }
 
@@ -41,9 +42,10 @@ public class Utils {
 //        });
     }
 
-    public static void inflateImagePicasso(final Context context, String url, final ImageView iv) {
+    public static void inflateImage(final Context context, String url, final ImageView iv) {
         Picasso.with(context)
                 .load(url)
+                .placeholder(R.drawable.default_placeholder)
                 .into(iv);
     }
 

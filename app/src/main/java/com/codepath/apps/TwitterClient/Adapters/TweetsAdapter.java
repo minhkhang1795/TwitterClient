@@ -87,7 +87,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         holder.mScreenName.setText("@" + tweet.getmUser().getmScreenName());
         holder.mUserName.setText(tweet.getmUser().getmName());
 
-        Utils.inflateImage(mContext, tweet.getmUser().getmImageUrl(), holder.mProfileImageView);
+        Utils.inflateRoundedImage(mContext, tweet.getmUser().getmImageUrl(), holder.mProfileImageView);
         holder.mProfileImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,7 +98,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         });
         if (!tweet.getmImageUrl().equals("")) {
             holder.mTweetImage.setVisibility(View.VISIBLE);
-            Utils.inflateImage(mContext, tweet.getmImageUrl(), holder.mTweetImage);
+            Utils.inflateRoundedImage(mContext, tweet.getmImageUrl(), holder.mTweetImage);
         } else {
             holder.mTweetImage.setVisibility(View.GONE);
         }

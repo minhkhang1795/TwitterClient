@@ -94,10 +94,10 @@ public class DetailsActivity extends AppCompatActivity implements ComposeDialog.
         setupFavoriteBtn();
         setupRetweetBtn();
 
-        Utils.inflateImage(this, tweet.getmUser().getmImageUrl(), mProfileImageView);
+        Utils.inflateRoundedImage(this, tweet.getmUser().getmImageUrl(), mProfileImageView);
         if (tweet.getmImageUrl() != null) {
             mTweetImage.setVisibility(View.VISIBLE);
-            Utils.inflateImage(this, tweet.getmImageUrl(), mTweetImage);
+            Utils.inflateRoundedImage(this, tweet.getmImageUrl(), mTweetImage);
         } else mTweetImage.setVisibility(View.GONE);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {

@@ -106,8 +106,8 @@ public class ProfileActivity extends AppCompatActivity implements
     }
 
     private void attachDataToViews() {
-        Utils.inflateImagePicasso(this, user.getmBackgroundUrl(), backgroundImage);
-        Utils.inflateImage(this, user.getmImageUrl(), mProfileImageView);
+        Utils.inflateImage(this, user.getmBackgroundUrl(), backgroundImage);
+        Utils.inflateRoundedImage(this, user.getmImageUrl(), mProfileImageView);
         mScreenName.setText("@" + user.getmScreenName());
         mUserName.setText(user.getmName());
         mFollowersCount.setText(String.valueOf(user.getmFollowersCount()));
