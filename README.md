@@ -128,6 +128,7 @@ The following **bonus** features are implemented:
 The following **additional** features are implemented:
 
 * [x] Parallax image in profile activity.
+* [x] Not allow user to crazy-click on unfavorite/favorite/unretweet/retweet buttons
 
 ## Video Walkthrough 
 
