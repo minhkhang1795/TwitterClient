@@ -29,19 +29,26 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layout_collapseMode="none"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="120dp"
                 android:background="@color/white"
                 app:layout_collapseMode="none">
+
+                <ImageView
+                    android:id="@+id/background_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary" />
 
                 <ImageView
                     android:id="@+id/profile_image_view"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:layout_below="@id/background_image_view"
                     android:layout_marginBottom="14dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
@@ -111,13 +118,6 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/background_image_view"
-                android:background="@color/colorPrimary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_collapseMode="parallax" />
-
             <include layout="@layout/toolbar_transparent" />
         </android.support.design.widget.CollapsingToolbarLayout>
         <!--</in.srain.cube.views.ptr.PtrClassicFrameLayout>-->
@@ -136,8 +136,6 @@
             app:pstsIndicatorHeight="4dp"
             app:pstsShouldExpand="true"
             app:pstsTextAllCaps="true" />
-
-
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
@@ -152,8 +150,8 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="90dp"
         android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>

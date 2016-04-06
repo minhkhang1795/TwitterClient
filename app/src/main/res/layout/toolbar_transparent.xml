@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="@android:color/transparent"
+    android:titleTextColor="@color/white"
     android:id="@+id/toolbar_transparent"
     android:theme="@style/ToolbarTheme"
     app:layout_collapseMode="pin" />

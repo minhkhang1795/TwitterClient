@@ -83,6 +83,14 @@ public class ProfileActivity extends AppCompatActivity implements
 
         client = TwitterApplication.getRestClient();
         getData();
+        setupBasicView();
+    }
+
+    private void setupBasicView() {
+        setupToolbar();
+        resizeBackgroundImageLayout();
+        viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+        tabStrip.setViewPager(viewPager);
     }
 
     @Override
@@ -97,9 +105,7 @@ public class ProfileActivity extends AppCompatActivity implements
         }
     }
 
-    private void setupViews() {
-        setupToolbar();
-        resizeBackgroundImageLayout();
+    private void attachDataToViews() {
         Utils.inflateImagePicasso(this, user.getmBackgroundUrl(), backgroundImage);
         Utils.inflateImage(this, user.getmImageUrl(), mProfileImageView);
         mScreenName.setText("@" + user.getmScreenName());
@@ -108,8 +114,6 @@ public class ProfileActivity extends AppCompatActivity implements
         mFriendsCount.setText(String.valueOf(user.getmFriendsCount()));
         mFollowersText.setText("FOLLOWERS");
         mFriendsText.setText("FRIENDS");
-        viewPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
-        tabStrip.setViewPager(viewPager);
     }
 
     private void resizeBackgroundImageLayout() {
@@ -160,7 +164,7 @@ public class ProfileActivity extends AppCompatActivity implements
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     user = User.fromJSON(response);
                     Log.d("DEBUG-SSS", response.toString());
-                    setupViews();
+                    attachDataToViews();
                 }
 
                 @Override
@@ -175,7 +179,7 @@ public class ProfileActivity extends AppCompatActivity implements
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     user = User.fromJSON(response);
                     Log.d("DEBUG-S", response.toString());
-                    setupViews();
+                    attachDataToViews();
                 }
 
                 @Override
